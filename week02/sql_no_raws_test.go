@@ -47,20 +47,19 @@ func do() error {
 	id := 5
 	err := getRow(id)
 	if err != nil {
-		if errors.As(err,&SqlNoRowError) {
-			return errors.Wrap(err,"数据articles不存在")
+		if errors.As(err, &SqlNoRowError) {
+			return errors.Wrapf(err, "数据articles不存在 id=%d", id)
 		}
 		return err
 	}
 	return nil
 }
 
-
 func TestMockQuery(t *testing.T) {
-	err:= do()
+	err := do()
 	if err != nil {
-		fmt.Printf("%v\n",err)
-		fmt.Printf("%+v\n",err)
+		fmt.Printf("%v\n", err)
+		fmt.Printf("%+v\n", err)
 
 	}
 
