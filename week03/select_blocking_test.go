@@ -23,3 +23,7 @@ func TestBlocking(t *testing.T) {
 		fmt.Println("ok", res)
 	}
 }
+
+func TestFor(t *testing.T) {
+
+}
