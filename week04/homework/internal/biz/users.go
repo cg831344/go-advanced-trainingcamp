@@ -1,12 +1,9 @@
 package biz
 
 import (
+	"github.com/google/cg831344/go-advanced-trainingcamp/week04/homework/internal/service"
 	"github.com/pkg/errors"
 )
-
-type User struct {
-	UserName string
-}
 
 // 检测用户名是否符合规范
 func checkUserName(username string) error {
@@ -17,11 +14,11 @@ func checkUserName(username string) error {
 	return nil
 }
 
-func AddUser(username string) (*User, error) {
+func AddUser(username string) (*service.User, error) {
 	if err := checkUserName(username); err != nil {
 		return nil, err
 	}
 
-	return &User{UserName: username}, nil
+	return &service.User{UserName: username}, nil
 
 }
