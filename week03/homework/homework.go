@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 // 监控信号量，返回一个CancelContext
@@ -58,9 +59,15 @@ func debugHttpServer() *http.Server {
 	return srv
 }
 
-func shutDownServer(ctx context.Context, srvs ...*http.Server) {
+func shutDownServer(srvs ...*http.Server) {
+	// 加入shutdown的等待时间，超过直接停止
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*5))
+	defer cancel()
 	for _, srv := range srvs {
-		_ = srv.Shutdown(ctx)
+		err := srv.Shutdown(ctx)
+		if err != nil {
+			log.Printf("关闭服务失败 %s,%s", srv.Addr, err)
+		}
 
 	}
 }
@@ -94,7 +101,7 @@ func main() {
 		select {
 		case <-ctx.Done():
 			log.Println("收到关闭信号")
-			shutDownServer(ctx, appHttpServer, debugHttpServer)
+			shutDownServer(appHttpServer, debugHttpServer)
 		}
 	}()
 
@@ -105,7 +112,7 @@ func main() {
 			log.Printf("正常关闭")
 		} else {
 			log.Printf("启动异常：%s", err)
-			shutDownServer(ctx, appHttpServer, debugHttpServer)
+			shutDownServer(appHttpServer, debugHttpServer)
 		}
 
 	}
